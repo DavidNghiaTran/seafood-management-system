@@ -575,3 +575,38 @@ restaurant-management/
 ├── README.md
 ├── pom.xml
 └── .gitignore
+```
+
+---
+
+## 13. Hướng dẫn chạy dự án
+
+### Yêu cầu hệ thống
+- **Java**: JDK 17 hoặc mới hơn
+- **Cơ sở dữ liệu**: MySQL đang chạy (Mặc định Port `3306`).
+  - Username mặc định: `root`
+  - Password mặc định: `admin`
+*(Nếu bạn cấu hình DB khác, vui lòng chỉnh sửa lại trong `demo/src/main/resources/application.properties`)*
+
+### Các bước khởi chạy (Local)
+
+1. **Mở terminal (PowerShell / CMD / Bash)**.
+
+2. **Di chuyển vào thư mục chứa code Spring Boot**:
+   ```bash
+   cd demo
+   ```
+
+3. **Chạy ứng dụng bằng Maven Wrapper** *(không yêu cầu cài đặt sẵn Maven trên máy)*:
+   - **Trên Windows**:
+     ```powershell
+     .\mvnw.cmd spring-boot:run
+     ```
+   - **Trên macOS / Linux**:
+     ```bash
+     ./mvnw spring-boot:run
+     ```
+
+4. **Sử dụng ứng dụng**:
+   Sau khi terminal hiện dòng `Started RestaurantManagementApplication`, mở trình duyệt và truy cập: 
+   👉 **[http://localhost:8080](http://localhost:8080)**
