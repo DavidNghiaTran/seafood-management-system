@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/base}">
+<head>
+    <title>Nhân Viên - Quản Lý Nhà Hàng Hải Sản</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <!-- Thông báo -->
+        <div th:if="${successMessage}" class="alert alert-success" style="background: #d4edda; color: #155724; padding: 12px 20px; border-radius: 8px; margin-bottom: 16px; border: 1px solid #c3e6cb;">
+            <i class="fa-solid fa-circle-check"></i> <span th:text="${successMessage}"></span>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger" style="background: #f8d7da; color: #721c24; padding: 12px 20px; border-radius: 8px; margin-bottom: 16px; border: 1px solid #f5c6cb;">
+            <i class="fa-solid fa-circle-exclamation"></i> <span th:text="${errorMessage}"></span>
+        </div>
+
+        <div class="dashboard-header" style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h1 class="page-title">Quản Lý Nhân Viên</h1>
+                <p class="subtitle">Danh sách nhân viên (phục vụ, đầu bếp) của nhà hàng.</p>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <!-- Import Excel -->
+                <form th:action="@{/employees/import}" method="post" enctype="multipart/form-data" style="display: flex; gap: 8px; align-items: center;">
+                    <input type="file" name="file" accept=".xlsx" required style="font-size: 0.85rem; padding: 6px 10px; border: 1px solid #ddd; border-radius: 6px; background: white;">
+                    <button type="submit" class="btn" style="background: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; white-space: nowrap;">
+                        <i class="fa-solid fa-file-excel"></i> Import Excel
+                    </button>
+                </form>
+                <a th:href="@{/employees/create}" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Thêm Nhân Viên</a>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Họ Tên</th>
+                            <th>Vị Trí</th>
+                            <th>SĐT</th>
+                            <th>Vai Trò</th>
+                            <th style="width: 150px; text-align: center;">Hành Động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="employee : ${employees}">
+                            <td th:text="${employee.id}">1</td>
+                            <td th:text="${employee.fullName}" style="font-weight: 600; color: var(--dark);">Nguyễn Văn B</td>
+                            <td th:text="${employee.position}">Phục vụ</td>
+                            <td th:text="${employee.phone}">0912...</td>
+                            <td><span class="status-badge status-pending" th:text="${employee.role}">EMPLOYEE</span></td>
+                            <td style="text-align: center;">
+                                <a th:href="@{/employees/edit/{id}(id=${employee.id})}" class="action-btn" title="Sửa"><i class="fa-solid fa-pen-to-square"></i></a>
+                                <a th:href="@{/employees/delete/{id}(id=${employee.id})}" class="action-btn text-danger" title="Xóa" onclick="return confirm('Bạn có chắc chắn muốn xóa nhân viên này?');" style="margin-left: 10px;"><i class="fa-solid fa-trash"></i></a>
+                            </td>
+                        </tr>
+                        <tr th:if="${employees.empty}">
+                            <td colspan="6" style="text-align: center; padding: 2rem; color: var(--gray-600);">Chưa có nhân viên nào. Hãy thêm nhân viên mới.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Hướng dẫn import -->
+        <div class="panel" style="margin-top: 16px; padding: 16px;">
+            <h3 style="margin-bottom: 8px; font-size: 0.95rem; color: var(--dark);"><i class="fa-solid fa-info-circle"></i> Hướng dẫn Import Excel (Nhân Viên)</h3>
+            <p style="font-size: 0.85rem; color: var(--gray-600); margin: 0;">
+                File Excel (.xlsx) cần có các cột theo thứ tự: <strong>Họ Tên</strong> | <strong>Username</strong> | <strong>Password</strong> | <strong>SĐT</strong> | <strong>Địa Chỉ</strong> | <strong>Vị Trí</strong>. Vai trò sẽ tự động được gán là EMPLOYEE.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

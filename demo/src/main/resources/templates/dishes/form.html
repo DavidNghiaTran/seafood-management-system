@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/base}">
+<head>
+    <title th:text="${dish.id == null ? 'Thêm Món Ăn Mới' : 'Cập Nhật Món Ăn'}">Form Món Ăn</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="dashboard-header">
+            <h1 class="page-title" th:text="${dish.id == null ? 'Thêm Món Ăn Mới' : 'Cập Nhật Món Ăn'}">Quản Lý Món Ăn</h1>
+            <a th:href="@{/dishes}" class="btn" style="background-color: var(--gray-200); color: var(--dark);"><i class="fa-solid fa-arrow-left"></i> Quay lại Danh sách</a>
+        </div>
+
+        <div class="panel" style="max-width: 600px;">
+            <form th:action="@{/dishes/save}" th:object="${dish}" method="post">
+                <input type="hidden" th:field="*{id}" />
+                
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label for="name" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: var(--dark);">Tên Món <span class="text-danger">*</span></label>
+                    <input type="text" id="name" th:field="*{name}" class="form-control" required style="width: 100%; padding: 0.8rem; border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit;">
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label for="category" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: var(--dark);">Danh Mục <span class="text-danger">*</span></label>
+                    <select id="category" th:field="*{category}" class="form-control" required style="width: 100%; padding: 0.8rem; border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit; background-color: white;">
+                        <option value="">-- Chọn Danh Mục --</option>
+                        <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}"></option>
+                    </select>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label for="price" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: var(--dark);">Giá (VNĐ) <span class="text-danger">*</span></label>
+                    <input type="number" id="price" th:field="*{price}" class="form-control" required min="0" step="1000" style="width: 100%; padding: 0.8rem; border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit;">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: var(--dark);">Trạng Thái</label>
+                    <div style="display: flex; gap: 1rem; align-items: center;">
+                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                            <input type="radio" th:field="*{status}" th:value="true"> Sẵn Sàng (Active)
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                            <input type="radio" th:field="*{status}" th:value="false"> Hết Món (Inactive)
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label for="description" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: var(--dark);">Mô Tả</label>
+                    <textarea id="description" th:field="*{description}" class="form-control" rows="3" style="width: 100%; padding: 0.8rem; border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit; resize: vertical;"></textarea>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" style="padding: 0.8rem 1.5rem; font-size: 1rem;">
+                    <i class="fa-solid fa-save"></i> <span th:text="${dish.id == null ? 'Lưu Món Ăn' : 'Cập Nhật'}">Lưu</span>
+                </button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

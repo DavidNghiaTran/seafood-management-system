@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/base}">
+<head>
+    <title>Khách Hàng - Quản Lý Nhà Hàng Hải Sản</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <!-- Thông báo -->
+        <div th:if="${successMessage}" class="alert alert-success" style="background: #d4edda; color: #155724; padding: 12px 20px; border-radius: 8px; margin-bottom: 16px; border: 1px solid #c3e6cb;">
+            <i class="fa-solid fa-circle-check"></i> <span th:text="${successMessage}"></span>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger" style="background: #f8d7da; color: #721c24; padding: 12px 20px; border-radius: 8px; margin-bottom: 16px; border: 1px solid #f5c6cb;">
+            <i class="fa-solid fa-circle-exclamation"></i> <span th:text="${errorMessage}"></span>
+        </div>
+
+        <div class="dashboard-header" style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h1 class="page-title">Quản Lý Khách Hàng</h1>
+                <p class="subtitle">Danh sách khách hàng của nhà hàng.</p>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <!-- Import Excel -->
+                <form th:action="@{/customers/import}" method="post" enctype="multipart/form-data" style="display: flex; gap: 8px; align-items: center;">
+                    <input type="file" name="file" accept=".xlsx" required style="font-size: 0.85rem; padding: 6px 10px; border: 1px solid #ddd; border-radius: 6px; background: white;">
+                    <button type="submit" class="btn" style="background: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; white-space: nowrap;">
+                        <i class="fa-solid fa-file-excel"></i> Import Excel
+                    </button>
+                </form>
+                <a th:href="@{/customers/create}" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Thêm Khách Hàng</a>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Tên Khách Hàng</th>
+                            <th>Số Điện Thoại</th>
+                            <th>Địa Chỉ</th>
+                            <th style="width: 150px; text-align: center;">Hành Động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="customer : ${customers}">
+                            <td th:text="${customer.id}">1</td>
+                            <td th:text="${customer.fullName}" style="font-weight: 600; color: var(--dark);">Nguyễn Văn A</td>
+                            <td th:text="${customer.phone}">0123456789</td>
+                            <td th:text="${customer.address}">Hà Nội</td>
+                            <td style="text-align: center;">
+                                <a th:href="@{/customers/edit/{id}(id=${customer.id})}" class="action-btn" title="Sửa"><i class="fa-solid fa-pen-to-square"></i></a>
+                                <a th:href="@{/customers/delete/{id}(id=${customer.id})}" class="action-btn text-danger" title="Xóa" onclick="return confirm('Bạn có chắc chắn muốn xóa khách hàng này?');" style="margin-left: 10px;"><i class="fa-solid fa-trash"></i></a>
+                            </td>
+                        </tr>
+                        <tr th:if="${customers.empty}">
+                            <td colspan="5" style="text-align: center; padding: 2rem; color: var(--gray-600);">Chưa có khách hàng nào. Hãy thêm khách hàng mới.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Hướng dẫn import -->
+        <div class="panel" style="margin-top: 16px; padding: 16px;">
+            <h3 style="margin-bottom: 8px; font-size: 0.95rem; color: var(--dark);"><i class="fa-solid fa-info-circle"></i> Hướng dẫn Import Excel (Khách Hàng)</h3>
+            <p style="font-size: 0.85rem; color: var(--gray-600); margin: 0;">
+                File Excel (.xlsx) cần có các cột theo thứ tự: <strong>Họ Tên</strong> | <strong>Số Điện Thoại</strong> | <strong>Địa Chỉ</strong>. Hàng đầu tiên là tiêu đề (sẽ bị bỏ qua).
+            </p>
+        </div>
+    </div>
+</body>
+</html>

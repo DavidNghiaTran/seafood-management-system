@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Quản Lý Nhà Hàng Hải Sản</title>
+    <!-- CSS Tùy chỉnh -->
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Menu -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <i class="fa-solid fa-fish-fins logo-icon"></i>
+                <h2>Seafood Admin</h2>
+            </div>
+            <ul class="nav-links">
+                <li><a th:href="@{/}"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+                <li class="nav-title">Menu & Bàn</li>
+                <li><a th:href="@{/categories}"><i class="fa-solid fa-layer-group"></i> Danh Mục Món</a></li>
+                <li><a th:href="@{/dishes}"><i class="fa-solid fa-bowl-food"></i> Quản Lý Món Ăn</a></li>
+                <li><a th:href="@{/tables}"><i class="fa-solid fa-chair"></i> Quản Lý Bàn</a></li>
+                
+                <li class="nav-title">Đơn Hàng</li>
+                <li><a th:href="@{/orders/create}"><i class="fa-solid fa-cart-plus"></i> Tạo Đơn Hàng</a></li>
+                <li><a th:href="@{/orders}"><i class="fa-solid fa-receipt"></i> Hóa Đơn</a></li>
+                
+                <li class="nav-title">Người Dùng</li>
+                <li><a th:href="@{/customers}"><i class="fa-solid fa-users"></i> Khách Hàng</a></li>
+                <li th:if="${session.loggedInUser != null and session.loggedInUser.role.name() == 'ADMIN'}">
+                    <a th:href="@{/users}"><i class="fa-solid fa-user-shield"></i> Quản Lý Tài Khoản</a>
+                </li>
+                <li><a th:href="@{/employees}"><i class="fa-solid fa-user-tie"></i> Nhân Viên</a></li>
+                <li><a th:href="@{/attendances}"><i class="fa-solid fa-clock"></i> Chấm Công</a></li>
+                
+                <li class="nav-title">Báo Cáo</li>
+                <li><a th:href="@{/reports}"><i class="fa-solid fa-chart-line"></i> Doanh Thu</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Topbar Header -->
+            <header class="topbar">
+                <div class="search-bar">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" placeholder="Tìm kiếm...">
+                </div>
+                <div class="user-profile">
+                    <span class="user-name" th:text="${session.loggedInUser != null ? session.loggedInUser.fullName : 'Khách'}">Admin User</span>
+                    <img src="https://ui-avatars.com/api/?name=User&background=0D8ABC&color=fff" alt="User Profile" class="avatar">
+                    <a th:href="@{/logout}" class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i> Đăng xuất</a>
+                </div>
+            </header>
+
+            <!-- Dynamic Content Area -->
+            <div class="content-area" layout:fragment="content">
+                 <!-- Content is injected here -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Script to dynamically highlight the active menu item -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const currentPath = window.location.pathname;
+            const menuLinks = document.querySelectorAll('.sidebar .nav-links a');
+            
+            menuLinks.forEach(link => {
+                const linkPath = link.getAttribute('href');
+                if (linkPath === currentPath) {
+                    link.classList.add('active');
+                } else if (linkPath !== '/' && currentPath.startsWith(linkPath)) {
+                    // Highlight generic prefixes like '/orders/create' matching '/orders' (with some heuristic if needed)
+                    // But explicitly setting it exact is safer. We'll do a simple exact or startswith matching.
+                    link.classList.add('active');
+                }
+            });
+            
+            // If multiple active, keep the longest match (e.g. /orders/create vs /orders)
+            const activeLinks = document.querySelectorAll('.sidebar .nav-links a.active');
+            if(activeLinks.length > 1) {
+                let longest = activeLinks[0];
+                for(let i=1; i<activeLinks.length; i++) {
+                    if(activeLinks[i].getAttribute('href').length > longest.getAttribute('href').length) {
+                        longest.classList.remove('active');
+                        longest = activeLinks[i];
+                    } else {
+                        activeLinks[i].classList.remove('active');
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/base}">
+<head>
+    <title>Hóa Đơn - Quản Lý Nhà Hàng Hải Sản</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="dashboard-header" style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h1 class="page-title">Danh Sách Hóa Đơn</h1>
+                <p class="subtitle">Lịch sử giao dịch và hóa đơn của nhà hàng.</p>
+            </div>
+            <a th:href="@{/orders/create}" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Tạo Đơn Hàng Mới</a>
+        </div>
+
+        <!-- Success/Error Messages -->
+        <div th:if="${successMessage}" class="alert alert-success" style="padding: 1rem; background-color: #d4edda; color: #155724; border-radius: 5px; margin-bottom: 1rem;">
+            <i class="fa-solid fa-circle-check"></i> <span th:text="${successMessage}"></span>
+        </div>
+
+        <div class="panel">
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Mã HĐ</th>
+                            <th>Ngày Tạo</th>
+                            <th>Bàn</th>
+                            <th>Khách Hàng</th>
+                            <th>Người Lập</th>
+                            <th>Tổng Tiền</th>
+                            <th>Trạng Thái</th>
+                            <th style="text-align: center;">Hành Động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="order : ${orders}">
+                            <td th:text="'#' + ${order.id}" style="font-weight: bold;">#1</td>
+                            <td th:text="${#temporals.format(order.orderDate, 'dd/MM/yyyy HH:mm')}">01/01/2026</td>
+                            <td th:text="${order.restaurantTable != null ? 'Bàn ' + order.restaurantTable.tableNumber : 'Mang đi'}">Bàn 1</td>
+                            <td th:text="${order.customer != null ? order.customer.fullName : 'Khách vãng lai'}">Nguyễn A</td>
+                            <td th:text="${order.createdBy.fullName}">Admin</td>
+                            <td th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'" style="color: var(--danger); font-weight: bold;">100,000 VNĐ</td>
+                            <td>
+                                <span th:if="${order.status == 'PENDING'}" class="status-badge status-pending">Chưa Thanh Toán</span>
+                                <span th:if="${order.status == 'COMPLETED'}" class="status-badge status-active">Đã Thanh Toán</span>
+                                <span th:if="${order.status == 'CANCELLED'}" class="status-badge status-inactive">Đã Hủy</span>
+                            </td>
+                            <td style="text-align: center;">
+                                <a th:if="${order.status == 'PENDING'}" th:href="@{/orders/complete/{id}(id=${order.id})}" class="action-btn" title="Thanh Toán" style="color: var(--success);"><i class="fa-solid fa-check-to-slot"></i></a>
+                            </td>
+                        </tr>
+                        <tr th:if="${orders.empty}">
+                            <td colspan="8" style="text-align: center; padding: 2rem; color: var(--gray-600);">Chưa có hóa đơn nào trong hệ thống.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

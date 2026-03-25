@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Người Dùng</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; }
+        .container { max-width: 1000px; margin: 0 auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .header-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        h1 { margin: 0; color: #333; }
+        .btn { padding: 8px 15px; text-decoration: none; border-radius: 5px; color: white; display: inline-block; }
+        .btn-primary { background-color: #0d8abc; }
+        .btn-warning { background-color: #f6ad55; }
+        .btn-danger { background-color: #e53e3e; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+        th { background-color: #edf2f7; color: #4a5568; font-weight: 600; }
+        tr:hover { background-color: #f7fafc; }
+        .back-link { display: inline-block; margin-bottom: 15px; color: #0d8abc; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-link"><i class="fa-solid fa-arrow-left"></i> Quay lại trang chủ</a>
+        <div class="header-actions">
+            <h1>Quản Lý Người Dùng</h1>
+            <a th:href="@{/users/add}" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Thêm người dùng</a>
+        </div>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Tên đăng nhập</th>
+                    <th>Họ và tên</th>
+                    <th>Vai trò (Role)</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="u : ${users}">
+                    <td th:text="${u.id}"></td>
+                    <td th:text="${u.username}"></td>
+                    <td th:text="${u.fullName}"></td>
+                    <td th:text="${u.role}"></td>
+                    <td>
+                        <a th:href="@{/users/edit/{id}(id=${u.id})}" class="btn btn-warning"><i class="fa-solid fa-pen"></i></a>
+                        <a th:href="@{/users/delete/{id}(id=${u.id})}" class="btn btn-danger" onclick="return confirm('Bạn có chắc chắn muốn xóa?')"><i class="fa-solid fa-trash"></i></a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

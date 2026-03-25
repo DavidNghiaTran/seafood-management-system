@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/base}">
+<head>
+    <title th:text="${attendance.id == null ? 'Ghi Nhận Chấm Công' : 'Cập Nhật Chấm Công'}">Form Chấm Công</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="dashboard-header">
+            <h1 class="page-title" th:text="${attendance.id == null ? 'Ghi Nhận Chấm Công' : 'Cập Nhật Chấm Công'}">Form Chấm Công</h1>
+            <a th:href="@{/attendances}" class="btn" style="background-color: var(--gray-200); color: var(--dark);"><i class="fa-solid fa-arrow-left"></i> Quay lại Danh sách</a>
+        </div>
+
+        <div class="panel" style="max-width: 600px;">
+            <form th:action="@{/attendances/save}" th:object="${attendance}" method="post">
+                <input type="hidden" th:field="*{id}" />
+                <input type="hidden" th:field="*{checkInTime}" />
+                
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label for="employee" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: var(--dark);">Nhân Viên <span class="text-danger">*</span></label>
+                    <select id="employee" name="employee" class="form-control" required style="width: 100%; padding: 0.8rem; border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit;">
+                        <option value="">-- Chọn Nhân Viên --</option>
+                        <option th:each="emp : ${employees}" th:value="${emp.id}" th:text="${emp.fullName} + ' (' + (${emp.position != null ? emp.position : 'NV'}) + ')'" th:selected="${attendance.employee != null and attendance.employee.id == emp.id}"></option>
+                    </select>
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label for="workDate" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: var(--dark);">Ngày Làm Việc <span class="text-danger">*</span></label>
+                    <input type="date" id="workDate" th:field="*{workDate}" class="form-control" required style="width: 100%; padding: 0.8rem; border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit;">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: var(--dark);">Ca Làm <span class="text-danger">*</span></label>
+                    <select th:field="*{shift}" class="form-control" required style="width: 100%; padding: 0.8rem; border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit;">
+                        <option value="Sáng">Sáng</option>
+                        <option value="Chiều">Chiều</option>
+                        <option value="Tối">Tối</option>
+                        <option value="Full-time">Full-time</option>
+                    </select>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: var(--dark);">Trạng Thái <span class="text-danger">*</span></label>
+                    <select th:field="*{status}" class="form-control" required style="width: 100%; padding: 0.8rem; border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit;">
+                        <option value="CÓ MẶT">Có mặt</option>
+                        <option value="TRỄ">Đi trễ</option>
+                        <option value="VẮNG MẶT">Vắng mặt (Nghỉ)</option>
+                    </select>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label for="notes" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: var(--dark);">Ghi Chú</label>
+                    <textarea id="notes" th:field="*{notes}" class="form-control" rows="3" placeholder="Lý do đi trễ, nghỉ phép, v.v..." style="width: 100%; padding: 0.8rem; border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit; resize: vertical;"></textarea>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" style="padding: 0.8rem 1.5rem; font-size: 1rem;">
+                    <i class="fa-solid fa-save"></i> <span th:text="${attendance.id == null ? 'Lưu Kết Quả' : 'Cập Nhật'}">Lưu</span>
+                </button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/base}">
+<head>
+    <title>Tạo Đơn Hàng - Quản Lý Nhà Hàng Hải Sản</title>
+    <style>
+        .pos-container { display: flex; gap: 20px; align-items: flex-start; }
+        .menu-section { flex: 2; display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; }
+        .order-section { flex: 1; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); position: sticky; top: 20px; }
+        .dish-card { background: #fff; border-radius: 8px; border: 1px solid #eee; overflow: hidden; cursor: pointer; transition: 0.2s; padding: 10px; text-align: center; }
+        .dish-card:hover { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-color: var(--primary); }
+        .dish-image { width: 100%; height: 120px; object-fit: cover; border-radius: 5px; margin-bottom: 10px; }
+        .dish-title { font-weight: 600; margin-bottom: 5px; color: var(--dark); font-size: 1.1rem; }
+        .dish-price { color: var(--danger); font-weight: bold; }
+        
+        .order-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px dashed #eee; }
+        .qty-btn { width: 25px; height: 25px; border-radius: 50%; border: 1px solid #ddd; background: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .qty-input { width: 40px; text-align: center; border: 1px solid #ddd; border-radius: 4px; padding: 2px; -moz-appearance: textfield; }
+        .qty-input::-webkit-outer-spin-button, .qty-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        .order-total { font-size: 1.5rem; font-weight: bold; color: var(--danger); text-align: right; margin-top: 15px; }
+    </style>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="dashboard-header">
+            <h1 class="page-title">Tạo Đơn Hàng (POS)</h1>
+            <p class="subtitle">Bán hàng, order món và lập hóa đơn.</p>
+        </div>
+        
+        <div th:if="${errorMessage}" class="alert alert-danger" style="padding: 1rem; background-color: #f8d7da; color: #721c24; border-radius: 5px; margin-bottom: 1rem;">
+            <i class="fa-solid fa-circle-exclamation"></i> <span th:text="${errorMessage}"></span>
+        </div>
+
+        <form th:action="@{/orders/save}" method="post" id="orderForm">
+            <div class="pos-container">
+                <!-- Select Menu -->
+                <div class="menu-section">
+                    <div th:each="dish : ${dishes}" class="dish-card" th:data-id="${dish.id}" th:data-name="${dish.name}" th:data-price="${dish.price}" onclick="addDish(this.getAttribute('data-id'), this.getAttribute('data-name'), parseFloat(this.getAttribute('data-price')))">
+                        <img src="https://via.placeholder.com/200x150?text=No+Image" class="dish-image" alt="No image">
+                        <div class="dish-title" th:text="${dish.name}">Tên món</div>
+                        <div class="dish-price" th:text="${#numbers.formatDecimal(dish.price, 0, 'COMMA', 0, 'POINT')} + ' đ'">100,000 đ</div>
+                    </div>
+                </div>
+
+                <!-- Order Panel -->
+                <div class="order-section">
+                    <h3 style="margin-bottom: 15px; font-weight: 600; border-bottom: 2px solid #eee; padding-bottom: 10px;">Thùng Rác & Thanh Toán</h3>
+                    
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label style="font-weight: 600; font-size: 0.9rem; color: var(--dark);">Bàn <span class="text-danger">*</span></label>
+                        <select name="tableId" class="form-control" required style="width: 100%; padding: 0.5rem; border-radius: 5px; border: 1px solid #ddd;">
+                            <option value="">-- Chọn Bàn --</option>
+                            <option th:each="table : ${tables}" th:value="${table.id}" th:text="${'Bàn ' + table.tableNumber + ' (' + (table.status == true ? 'Trống' : 'Đang phục vụ') + ')'}" th:disabled="${table.status == false}"></option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label style="font-weight: 600; font-size: 0.9rem; color: var(--dark);">Khách Hàng</label>
+                        <select name="customerId" class="form-control" style="width: 100%; padding: 0.5rem; border-radius: 5px; border: 1px solid #ddd;">
+                            <option value="">-- Khách Vãng Lai --</option>
+                            <option th:each="customer : ${customers}" th:value="${customer.id}" th:text="${customer.fullName} + ' - ' + ${customer.phone}"></option>
+                        </select>
+                    </div>
+
+                    <div id="orderItems" style="min-height: 150px; max-height: 300px; overflow-y: auto; margin-top: 20px; border-top: 1px solid #eee; border-bottom: 1px solid #eee; padding: 10px 0;">
+                        <!-- JS injected items -->
+                        <div id="emptyCartMsg" style="text-align: center; color: var(--gray-500); padding: 20px 0; font-style: italic;">Chưa chọn món nào</div>
+                    </div>
+
+                    <div class="order-total" id="grandTotalLabel">Tổng: 0 đ</div>
+                    
+                    <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 20px; font-size: 1.1rem; padding: 12px; border-radius: 8px;">
+                        <i class="fa-solid fa-check"></i> Xác Nhận Đơn Hàng
+                    </button>
+                </div>
+            </div>
+        </form>
+        
+        <!-- JavaScript for POS interactions -->
+        <script th:inline="javascript">
+            const cart = {};
+
+            function formatCurrency(amount) {
+                return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + ' đ';
+            }
+
+            function addDish(id, name, price) {
+                if(cart[id]) {
+                    cart[id].qty++;
+                } else {
+                    cart[id] = { name: name, price: price, qty: 1 };
+                }
+                renderCart();
+            }
+
+            function updateQty(id, change) {
+                if(cart[id]) {
+                    cart[id].qty += change;
+                    if(cart[id].qty <= 0) {
+                        delete cart[id];
+                    }
+                    renderCart();
+                }
+            }
+            
+            function setQty(id, input) {
+                let val = parseInt(input.value);
+                if(isNaN(val) || val <= 0) {
+                    delete cart[id];
+                } else {
+                    cart[id].qty = val;
+                }
+                renderCart();
+            }
+
+            function renderCart() {
+                const container = document.getElementById('orderItems');
+                const emptyMsg = document.getElementById('emptyCartMsg');
+                const totalLabel = document.getElementById('grandTotalLabel');
+                
+                container.innerHTML = '';
+                let total = 0;
+                let hasItems = false;
+
+                for (const [id, item] of Object.entries(cart)) {
+                    hasItems = true;
+                    total += item.price * item.qty;
+                    
+                    const itemHtml = `
+                        <div class="order-item">
+                            <div style="flex: 2; font-weight: 500; font-size: 0.95rem;">${item.name}<br><small style="color:var(--gray-600);">${formatCurrency(item.price)}</small></div>
+                            <div style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 5px;">
+                                <button type="button" class="qty-btn" onclick="updateQty(${id}, -1)">-</button>
+                                <input type="number" name="dish_${id}" class="qty-input" value="${item.qty}" onchange="setQty(${id}, this)" min="1">
+                                <button type="button" class="qty-btn" onclick="updateQty(${id}, 1)">+</button>
+                            </div>
+                            <div style="flex: 1; text-align: right; font-weight: bold; color: var(--primary);">${formatCurrency(item.price * item.qty)}</div>
+                        </div>
+                    `;
+                    container.insertAdjacentHTML('beforeend', itemHtml);
+                }
+
+                if(!hasItems) {
+                    container.appendChild(emptyMsg);
+                    emptyMsg.style.display = 'block';
+                }
+
+                totalLabel.textContent = 'Tổng: ' + formatCurrency(total);
+            }
+        </script>
+    </div>
+</body>
+</html>
