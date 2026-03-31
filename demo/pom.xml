@@ -59,6 +59,14 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!-- Spring Boot DevTools for auto-reload -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<scope>runtime</scope>
+			<optional>true</optional>
+		</dependency>
+
 		<!-- Apache POI for Excel import -->
 		<dependency>
 			<groupId>org.apache.poi</groupId>

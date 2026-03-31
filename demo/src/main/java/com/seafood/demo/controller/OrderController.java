@@ -82,11 +82,13 @@ public class OrderController {
                 
                 if (quantity > 0) {
                     dishService.getDishById(dishId).ifPresent(dish -> {
-                        OrderDetail detail = new OrderDetail();
-                        detail.setDish(dish);
-                        detail.setQuantity(quantity);
-                        detail.setPrice(BigDecimal.valueOf(dish.getPrice()));
-                        details.add(detail);
+                        if (dish.isStatus()) {
+                            OrderDetail detail = new OrderDetail();
+                            detail.setDish(dish);
+                            detail.setQuantity(quantity);
+                            detail.setPrice(BigDecimal.valueOf(dish.getPrice()));
+                            details.add(detail);
+                        }
                     });
                 }
             }
@@ -99,13 +101,6 @@ public class OrderController {
 
         order.setOrderDetails(details);
         orderService.saveOrder(order);
-        
-        // Update table status
-        RestaurantTable table = order.getRestaurantTable();
-        if (table != null) {
-            table.setStatus(false); // false = OCCUPIED
-            tableService.saveTable(table);
-        }
 
         redirectAttributes.addFlashAttribute("successMessage", "Tạo đơn hàng thành công!");
         return "redirect:/orders";
@@ -114,17 +109,7 @@ public class OrderController {
     // Mark as completed
     @GetMapping("/complete/{id}")
     public String completeOrder(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
-        orderService.getOrderById(id).ifPresent(order -> {
-            order.setStatus("COMPLETED");
-            orderService.saveOrder(order);
-            
-            // Free the table
-            RestaurantTable table = order.getRestaurantTable();
-            if (table != null) {
-                table.setStatus(true); // true = AVAILABLE
-                tableService.saveTable(table);
-            }
-        });
+        orderService.completeOrder(id);
         redirectAttributes.addFlashAttribute("successMessage", "Đã thanh toán hóa đơn!");
         return "redirect:/orders";
     }

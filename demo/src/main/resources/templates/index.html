@@ -18,8 +18,8 @@
                 </div>
                 <div class="stat-details">
                     <p class="stat-title">Doanh Thu Hôm Nay</p>
-                    <h3 class="stat-value">12.500.000đ</h3>
-                    <p class="stat-trend positive"><i class="fa-solid fa-arrow-trend-up"></i> +15% so với hôm qua</p>
+                    <h3 class="stat-value" th:text="${#numbers.formatDecimal(todayRevenue, 0, 'COMMA', 0, 'POINT')} + 'đ'">12.500.000đ</h3>
+                    <p class="stat-trend positive"><i class="fa-solid fa-arrow-trend-up"></i> Tạm tính hôm nay</p>
                 </div>
             </div>
 
@@ -29,8 +29,8 @@
                 </div>
                 <div class="stat-details">
                     <p class="stat-title">Đơn Hàng Mới</p>
-                    <h3 class="stat-value">45</h3>
-                    <p class="stat-trend positive"><i class="fa-solid fa-arrow-trend-up"></i> +5% so với hôm qua</p>
+                    <h3 class="stat-value" th:text="${newOrdersCount}">45</h3>
+                    <p class="stat-trend positive"><i class="fa-solid fa-arrow-trend-up"></i> Hôm nay</p>
                 </div>
             </div>
 
@@ -40,8 +40,8 @@
                 </div>
                 <div class="stat-details">
                     <p class="stat-title">Bàn Đang Phục Vụ</p>
-                    <h3 class="stat-value">12 / 30</h3>
-                    <p class="stat-trend neutral">40% công suất</p>
+                    <h3 class="stat-value" th:text="${occupiedTables} + ' / ' + ${totalTables}">12 / 30</h3>
+                    <p class="stat-trend neutral" th:text="${totalTables > 0 ? (occupiedTables * 100 / totalTables) + '% công suất' : '0% công suất'}">40% công suất</p>
                 </div>
             </div>
 
@@ -50,9 +50,9 @@
                     <i class="fa-solid fa-users"></i>
                 </div>
                 <div class="stat-details">
-                    <p class="stat-title">Khách Hàng Mới</p>
-                    <h3 class="stat-value">18</h3>
-                    <p class="stat-trend positive"><i class="fa-solid fa-arrow-trend-up"></i> +8% so với tuần trước</p>
+                    <p class="stat-title">Tổng Khách Hàng</p>
+                    <h3 class="stat-value" th:text="${totalCustomers}">18</h3>
+                    <p class="stat-trend positive"><i class="fa-solid fa-users"></i> Khách hàng hệ thống</p>
                 </div>
             </div>
         </div>
@@ -77,35 +77,22 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>#ORD-001</td>
-                                <td>Bàn 05</td>
-                                <td>10:15 AM</td>
-                                <td>1.250.000đ</td>
-                                <td><span class="badge status-pending">Đang phục vụ</span></td>
+                            <tr th:each="order : ${recentOrders}">
+                                <td th:text="'#ORD-' + ${order.id}">#ORD-001</td>
+                                <td th:text="${order.restaurantTable != null ? 'Bàn ' + order.restaurantTable.tableNumber : 'Mang đi'}">Bàn 05</td>
+                                <td th:text="${#temporals.format(order.orderDate, 'HH:mm')}">10:15 AM</td>
+                                <td th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT')} + 'đ'">1.250.000đ</td>
                                 <td>
-                                    <button class="action-btn btn-view"><i class="fa-solid fa-eye"></i></button>
+                                    <span th:if="${order.status == 'PENDING'}" class="badge status-pending">Đang phục vụ</span>
+                                    <span th:if="${order.status == 'COMPLETED'}" class="badge status-paid">Đã thanh toán</span>
+                                    <span th:if="${order.status == 'CANCELLED'}" class="badge status-inactive">Đã Hủy</span>
+                                </td>
+                                <td>
+                                    <a th:href="@{/orders}" class="action-btn btn-view"><i class="fa-solid fa-eye"></i></a>
                                 </td>
                             </tr>
-                            <tr>
-                                <td>#ORD-002</td>
-                                <td>Bàn 12</td>
-                                <td>09:30 AM</td>
-                                <td>2.400.000đ</td>
-                                <td><span class="badge status-paid">Đã thanh toán</span></td>
-                                <td>
-                                    <button class="action-btn btn-view"><i class="fa-solid fa-eye"></i></button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>#ORD-003</td>
-                                <td>Bàn 01</td>
-                                <td>09:00 AM</td>
-                                <td>850.000đ</td>
-                                <td><span class="badge status-paid">Đã thanh toán</span></td>
-                                <td>
-                                    <button class="action-btn btn-view"><i class="fa-solid fa-eye"></i></button>
-                                </td>
+                            <tr th:if="${recentOrders.empty}">
+                                <td colspan="6" style="text-align: center;">Chưa có đơn hàng nào.</td>
                             </tr>
                         </tbody>
                     </table>
@@ -117,27 +104,14 @@
                     <h2>Món Bán Chạy</h2>
                 </div>
                 <ul class="top-dishes-list">
-                    <li class="dish-item">
+                    <li class="dish-item" th:each="entry : ${topDishes}">
                         <div class="dish-info">
                             <i class="fa-solid fa-fire text-danger"></i>
-                            <span class="dish-name">Tôm Hùm Phô Mai</span>
+                            <span class="dish-name" th:text="${entry.key.name}">Tôm Hùm Phô Mai</span>
                         </div>
-                        <span class="dish-sold">25 phần</span>
+                        <span class="dish-sold" th:text="${entry.value} + ' phần'">25 phần</span>
                     </li>
-                    <li class="dish-item">
-                        <div class="dish-info">
-                            <i class="fa-solid fa-fire text-danger"></i>
-                            <span class="dish-name">Cua Hoàng Đế Hấp</span>
-                        </div>
-                        <span class="dish-sold">18 phần</span>
-                    </li>
-                    <li class="dish-item">
-                        <div class="dish-info">
-                            <i class="fa-solid fa-fire text-danger"></i>
-                            <span class="dish-name">Lẩu Hải Sản Thái</span>
-                        </div>
-                        <span class="dish-sold">15 phần</span>
-                    </li>
+                    <li th:if="${topDishes.empty}" style="text-align: center; color: var(--gray-500); padding: 10px;">Chưa có dữ liệu đồ ăn bán chạy.</li>
                 </ul>
                 
                 <div class="quick-actions">

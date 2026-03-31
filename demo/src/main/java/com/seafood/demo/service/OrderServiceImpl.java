@@ -6,6 +6,8 @@ import com.seafood.demo.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.seafood.demo.entity.RestaurantTable;
+import com.seafood.demo.repository.TableRepository;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -16,6 +18,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private OrderRepository orderRepository;
+
+    @Autowired
+    private TableRepository tableRepository;
 
     @Override
     public List<Order> getAllOrders() {
@@ -47,7 +52,33 @@ public class OrderServiceImpl implements OrderService {
                 detail.setOrder(order);
             }
         }
-        return orderRepository.save(order);
+        Order savedOrder = orderRepository.save(order);
+        
+        // Update table status
+        if (savedOrder.getRestaurantTable() != null) {
+            RestaurantTable table = savedOrder.getRestaurantTable();
+            table.setStatus(false);
+            tableRepository.save(table);
+        }
+        
+        return savedOrder;
+    }
+
+    @Override
+    @Transactional
+    public void completeOrder(Long orderId) {
+        orderRepository.findById(orderId).ifPresent(order -> {
+            order.setStatus("COMPLETED");
+            
+            // Free the table
+            if (order.getRestaurantTable() != null) {
+                RestaurantTable table = order.getRestaurantTable();
+                table.setStatus(true); // true = AVAILABLE
+                tableRepository.save(table);
+            }
+            
+            orderRepository.save(order);
+        });
     }
 
     @Override

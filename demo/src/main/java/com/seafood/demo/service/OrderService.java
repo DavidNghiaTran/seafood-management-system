@@ -9,5 +9,6 @@ public interface OrderService {
     List<Order> getRecentOrders();
     Optional<Order> getOrderById(Long id);
     Order saveOrder(Order order);
+    void completeOrder(Long orderId);
     void deleteOrder(Long id);
 }
