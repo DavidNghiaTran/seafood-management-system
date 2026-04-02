@@ -21,4 +21,4 @@ COPY --from=build /app/target/*.jar app.jar
 EXPOSE ${PORT:-8080}
 
 # Run the application
-ENTRYPOINT java -jar -Dserver.port=${PORT:-8080} -Dspring.profiles.active=prod app.jar
+ENTRYPOINT java -jar -Dserver.port=${PORT:-8080} app.jar
