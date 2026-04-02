@@ -33,4 +33,9 @@ public class TableServiceImpl implements TableService {
     public void deleteTable(Long id) {
         tableRepository.deleteById(id);
     }
+
+    @Override
+    public RestaurantTable findByTableNumber(String tableNumber) {
+        return tableRepository.findByTableNumber(tableNumber);
+    }
 }

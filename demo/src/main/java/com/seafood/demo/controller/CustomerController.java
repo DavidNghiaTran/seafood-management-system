@@ -63,10 +63,22 @@ public class CustomerController {
         }
         try {
             List<Customer> customers = ExcelHelper.excelToCustomers(file.getInputStream());
+            int imported = 0;
+            int skipped = 0;
             for (Customer customer : customers) {
+                // Bỏ qua khách hàng đã tồn tại (trùng số điện thoại)
+                if (customerService.existsByPhone(customer.getPhone())) {
+                    skipped++;
+                    continue;
+                }
                 customerService.saveCustomer(customer);
+                imported++;
             }
-            redirectAttributes.addFlashAttribute("successMessage", "Import thành công " + customers.size() + " khách hàng!");
+            String msg = "Import thành công " + imported + " khách hàng thân thiết!";
+            if (skipped > 0) {
+                msg += " (Bỏ qua " + skipped + " khách hàng đã tồn tại)";
+            }
+            redirectAttributes.addFlashAttribute("successMessage", msg);
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Lỗi import: " + e.getMessage());
         }

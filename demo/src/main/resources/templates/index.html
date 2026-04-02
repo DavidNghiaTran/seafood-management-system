@@ -50,9 +50,9 @@
                     <i class="fa-solid fa-users"></i>
                 </div>
                 <div class="stat-details">
-                    <p class="stat-title">Tổng Khách Hàng</p>
+                    <p class="stat-title">Khách Hàng Thân Thiết</p>
                     <h3 class="stat-value" th:text="${totalCustomers}">18</h3>
-                    <p class="stat-trend positive"><i class="fa-solid fa-users"></i> Khách hàng hệ thống</p>
+                    <p class="stat-trend positive"><i class="fa-solid fa-users"></i> Khách hàng thân thiết</p>
                 </div>
             </div>
         </div>
@@ -62,7 +62,7 @@
             <div class="recent-orders panel">
                 <div class="panel-header">
                     <h2>Đơn Hàng Gần Đây</h2>
-                    <a href="#" class="view-all">Xem tất cả</a>
+                    <a th:href="@{/orders}" class="view-all">Xem tất cả</a>
                 </div>
                 <div class="table-responsive">
                     <table class="data-table">

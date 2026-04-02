@@ -26,8 +26,9 @@
                             <th>Mã HĐ</th>
                             <th>Ngày Tạo</th>
                             <th>Bàn</th>
-                            <th>Khách Hàng</th>
+                            <th>Khách Hàng Thân Thiết</th>
                             <th>Người Lập</th>
+                            <th>Ghi Chú</th>
                             <th>Tổng Tiền</th>
                             <th>Trạng Thái</th>
                             <th style="text-align: center;">Hành Động</th>
@@ -40,6 +41,7 @@
                             <td th:text="${order.restaurantTable != null ? 'Bàn ' + order.restaurantTable.tableNumber : 'Mang đi'}">Bàn 1</td>
                             <td th:text="${order.customer != null ? order.customer.fullName : 'Khách vãng lai'}">Nguyễn A</td>
                             <td th:text="${order.createdBy.fullName}">Admin</td>
+                            <td th:text="${order.note != null ? order.note : ''}" style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"></td>
                             <td th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'" style="color: var(--danger); font-weight: bold;">100,000 VNĐ</td>
                             <td>
                                 <span th:if="${order.status == 'PENDING'}" class="status-badge status-pending">Chưa Thanh Toán</span>
@@ -51,7 +53,7 @@
                             </td>
                         </tr>
                         <tr th:if="${orders.empty}">
-                            <td colspan="8" style="text-align: center; padding: 2rem; color: var(--gray-600);">Chưa có hóa đơn nào trong hệ thống.</td>
+                            <td colspan="9" style="text-align: center; padding: 2rem; color: var(--gray-600);">Chưa có hóa đơn nào trong hệ thống.</td>
                         </tr>
                     </tbody>
                 </table>

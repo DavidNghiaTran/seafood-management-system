@@ -59,18 +59,26 @@
                     
                     <div class="form-group" style="margin-bottom: 15px;">
                         <label style="font-weight: 600; font-size: 0.9rem; color: var(--dark);">Bàn <span class="text-danger">*</span></label>
-                        <select name="tableId" class="form-control" required style="width: 100%; padding: 0.5rem; border-radius: 5px; border: 1px solid #ddd;">
+                        <select name="tableId" id="tableSelect" class="form-control" required style="width: 100%; padding: 0.5rem; border-radius: 5px; border: 1px solid #ddd;" onchange="showTableCapacity()">
                             <option value="">-- Chọn Bàn --</option>
-                            <option th:each="table : ${tables}" th:value="${table.id}" th:text="${'Bàn ' + table.tableNumber + ' (' + (table.status == true ? 'Trống' : 'Đang phục vụ') + ')'}" th:disabled="${table.status == false}"></option>
+                            <option th:each="table : ${tables}" th:value="${table.id}" th:data-capacity="${table.capacity}" th:text="${'Bàn ' + table.tableNumber + ' (' + (table.status == true ? 'Trống' : 'Đang phục vụ') + ')'}" th:disabled="${table.status == false}"></option>
                         </select>
+                        <div id="tableCapacityInfo" style="display: none; margin-top: 8px; padding: 8px 12px; background: #e8f4fd; color: #0c5460; border-radius: 6px; font-size: 0.85rem; border: 1px solid #bee5eb;">
+                            <i class="fa-solid fa-chair"></i> Số chỗ ngồi: <strong id="capacityValue"></strong> người
+                        </div>
                     </div>
 
                     <div class="form-group" style="margin-bottom: 15px;">
-                        <label style="font-weight: 600; font-size: 0.9rem; color: var(--dark);">Khách Hàng</label>
+                        <label style="font-weight: 600; font-size: 0.9rem; color: var(--dark);">Khách Hàng Thân Thiết</label>
                         <select name="customerId" class="form-control" style="width: 100%; padding: 0.5rem; border-radius: 5px; border: 1px solid #ddd;">
                             <option value="">-- Khách Vãng Lai --</option>
                             <option th:each="customer : ${customers}" th:value="${customer.id}" th:text="${customer.fullName} + ' - ' + ${customer.phone}"></option>
                         </select>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label style="font-weight: 600; font-size: 0.9rem; color: var(--dark);">Ghi Chú Đơn Hàng</label>
+                        <textarea name="note" class="form-control" rows="3" placeholder="Nhập ghi chú cho đơn hàng (VD: không cay, thêm đá, ...)" style="width: 100%; padding: 0.5rem; border-radius: 5px; border: 1px solid #ddd; font-family: inherit; resize: vertical;"></textarea>
                     </div>
 
                     <div id="orderItems" style="min-height: 150px; max-height: 300px; overflow-y: auto; margin-top: 20px; border-top: 1px solid #eee; border-bottom: 1px solid #eee; padding: 10px 0;">
@@ -89,6 +97,21 @@
         
         <!-- JavaScript for POS interactions -->
         <script th:inline="javascript">
+            function showTableCapacity() {
+                const select = document.getElementById('tableSelect');
+                const infoDiv = document.getElementById('tableCapacityInfo');
+                const capacityValue = document.getElementById('capacityValue');
+                const selected = select.options[select.selectedIndex];
+
+                if (selected && selected.value) {
+                    const capacity = selected.getAttribute('data-capacity');
+                    capacityValue.textContent = capacity;
+                    infoDiv.style.display = 'block';
+                } else {
+                    infoDiv.style.display = 'none';
+                }
+            }
+
             const cart = {};
 
             function formatCurrency(amount) {

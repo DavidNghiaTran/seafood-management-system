@@ -31,7 +31,7 @@
                 <li><a th:href="@{/orders}"><i class="fa-solid fa-receipt"></i> Hóa Đơn</a></li>
                 
                 <li class="nav-title">Người Dùng</li>
-                <li><a th:href="@{/customers}"><i class="fa-solid fa-users"></i> Khách Hàng</a></li>
+                <li><a th:href="@{/customers}"><i class="fa-solid fa-users"></i> Khách Hàng Thân Thiết</a></li>
                 <li th:if="${session.loggedInUser != null and session.loggedInUser.role.name() == 'ADMIN'}">
                     <a th:href="@{/users}"><i class="fa-solid fa-user-shield"></i> Quản Lý Tài Khoản</a>
                 </li>

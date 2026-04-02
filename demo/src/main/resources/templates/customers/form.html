@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/base}">
 <head>
-    <title th:text="${customer.id == null ? 'Thêm Khách Hàng Mới' : 'Cập Nhật Khách Hàng'}">Form Khách Hàng</title>
+    <title th:text="${customer.id == null ? 'Thêm Khách Hàng Thân Thiết Mới' : 'Cập Nhật Khách Hàng Thân Thiết'}">Form Khách Hàng Thân Thiết</title>
 </head>
 <body>
     <div layout:fragment="content">
         <div class="dashboard-header">
-            <h1 class="page-title" th:text="${customer.id == null ? 'Thêm Khách Hàng Mới' : 'Cập Nhật Khách Hàng'}">Quản Lý Khách Hàng</h1>
+            <h1 class="page-title" th:text="${customer.id == null ? 'Thêm Khách Hàng Thân Thiết Mới' : 'Cập Nhật Khách Hàng Thân Thiết'}">Quản Lý Khách Hàng Thân Thiết</h1>
             <a th:href="@{/customers}" class="btn" style="background-color: var(--gray-200); color: var(--dark);"><i class="fa-solid fa-arrow-left"></i> Quay lại Danh sách</a>
         </div>
 
@@ -30,7 +30,7 @@
                 </div>
                 
                 <button type="submit" class="btn btn-primary" style="padding: 0.8rem 1.5rem; font-size: 1rem;">
-                    <i class="fa-solid fa-save"></i> <span th:text="${customer.id == null ? 'Lưu Khách Hàng' : 'Cập Nhật'}">Lưu</span>
+                    <i class="fa-solid fa-save"></i> <span th:text="${customer.id == null ? 'Lưu Khách Hàng Thân Thiết' : 'Cập Nhật'}">Lưu</span>
                 </button>
             </form>
         </div>

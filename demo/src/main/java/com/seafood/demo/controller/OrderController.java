@@ -51,6 +51,7 @@ public class OrderController {
     @PostMapping("/save")
     public String saveOrder(@RequestParam("tableId") Long tableId,
                             @RequestParam(value = "customerId", required = false) Long customerId,
+                            @RequestParam(value = "note", required = false) String note,
                             @RequestParam Map<String, String> params,
                             HttpSession session,
                             RedirectAttributes redirectAttributes) {
@@ -64,6 +65,11 @@ public class OrderController {
         order.setOrderDate(LocalDateTime.now());
         order.setStatus("PENDING");
         order.setCreatedBy(loggedInUser);
+
+        // Set note (optional)
+        if (note != null && !note.trim().isEmpty()) {
+            order.setNote(note.trim());
+        }
 
         // Assign Table
         tableService.getTableById(tableId).ifPresent(order::setRestaurantTable);

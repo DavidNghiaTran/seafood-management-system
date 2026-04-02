@@ -9,4 +9,5 @@ public interface CustomerService {
     Optional<Customer> getCustomerById(Long id);
     Customer saveCustomer(Customer customer);
     void deleteCustomer(Long id);
+    boolean existsByPhone(String phone);
 }

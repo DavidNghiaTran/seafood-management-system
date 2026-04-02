@@ -33,4 +33,9 @@ public class CustomerServiceImpl implements CustomerService {
     public void deleteCustomer(Long id) {
         customerRepository.deleteById(id);
     }
+
+    @Override
+    public boolean existsByPhone(String phone) {
+        return customerRepository.existsByPhone(phone);
+    }
 }

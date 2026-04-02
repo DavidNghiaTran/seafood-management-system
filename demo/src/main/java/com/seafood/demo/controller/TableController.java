@@ -63,10 +63,23 @@ public class TableController {
         }
         try {
             List<RestaurantTable> tables = ExcelHelper.excelToTables(file.getInputStream());
+            int imported = 0;
+            int skipped = 0;
             for (RestaurantTable table : tables) {
+                // Bỏ qua bàn đã tồn tại (trùng số bàn)
+                RestaurantTable existing = tableService.findByTableNumber(table.getTableNumber());
+                if (existing != null) {
+                    skipped++;
+                    continue;
+                }
                 tableService.saveTable(table);
+                imported++;
             }
-            redirectAttributes.addFlashAttribute("successMessage", "Import thành công " + tables.size() + " bàn!");
+            String msg = "Import thành công " + imported + " bàn!";
+            if (skipped > 0) {
+                msg += " (Bỏ qua " + skipped + " bàn đã tồn tại)";
+            }
+            redirectAttributes.addFlashAttribute("successMessage", msg);
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Lỗi import: " + e.getMessage());
         }

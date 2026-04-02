@@ -10,4 +10,5 @@ public interface TableService {
     RestaurantTable saveTable(RestaurantTable table);
     Optional<RestaurantTable> getTableById(Long id);
     void deleteTable(Long id);
+    RestaurantTable findByTableNumber(String tableNumber);
 }

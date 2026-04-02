@@ -54,8 +54,13 @@ public class DishController {
     }
 
     @GetMapping("/delete/{id}")
-    public String deleteDish(@PathVariable("id") Long id) {
-        dishService.deleteDish(id);
+    public String deleteDish(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
+        try {
+            dishService.deleteDish(id);
+            redirectAttributes.addFlashAttribute("successMessage", "Xóa món ăn thành công!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Không thể xóa món ăn này do món ăn đã được sử dụng trong đơn hàng!");
+        }
         return "redirect:/dishes";
     }
 

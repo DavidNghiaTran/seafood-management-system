@@ -50,8 +50,13 @@ public class CategoryController {
     }
 
     @GetMapping("/delete/{id}")
-    public String deleteCategory(@PathVariable("id") Long id) {
-        categoryService.deleteCategory(id);
+    public String deleteCategory(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
+        try {
+            categoryService.deleteCategory(id);
+            redirectAttributes.addFlashAttribute("successMessage", "Xóa danh mục thành công!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Không thể xóa danh mục này do đang có món ăn thuộc danh mục!");
+        }
         return "redirect:/categories";
     }
 

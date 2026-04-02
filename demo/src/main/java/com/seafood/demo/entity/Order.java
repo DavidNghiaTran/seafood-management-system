@@ -34,6 +34,9 @@ public class Order {
     @Column(nullable = false)
     private String status = "PENDING"; // PENDING, COMPLETED, CANCELLED
 
+    @Column(columnDefinition = "TEXT")
+    private String note;
+
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderDetail> orderDetails = new ArrayList<>();
 
@@ -103,5 +106,13 @@ public class Order {
 
     public void setOrderDetails(List<OrderDetail> orderDetails) {
         this.orderDetails = orderDetails;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
     }
 }

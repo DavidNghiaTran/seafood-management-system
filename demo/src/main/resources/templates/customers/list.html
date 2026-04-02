@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/base}">
 <head>
-    <title>Khách Hàng - Quản Lý Nhà Hàng Hải Sản</title>
+    <title>Khách Hàng Thân Thiết - Quản Lý Nhà Hàng Hải Sản</title>
 </head>
 <body>
     <div layout:fragment="content">
@@ -15,8 +15,8 @@
 
         <div class="dashboard-header" style="display: flex; justify-content: space-between; align-items: center;">
             <div>
-                <h1 class="page-title">Quản Lý Khách Hàng</h1>
-                <p class="subtitle">Danh sách khách hàng của nhà hàng.</p>
+                <h1 class="page-title">Quản Lý Khách Hàng Thân Thiết</h1>
+                <p class="subtitle">Danh sách khách hàng thân thiết của nhà hàng.</p>
             </div>
             <div style="display: flex; gap: 10px; align-items: center;">
                 <!-- Import Excel -->
@@ -26,7 +26,7 @@
                         <i class="fa-solid fa-file-excel"></i> Import Excel
                     </button>
                 </form>
-                <a th:href="@{/customers/create}" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Thêm Khách Hàng</a>
+                <a th:href="@{/customers/create}" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Thêm Khách Hàng Thân Thiết</a>
             </div>
         </div>
 
@@ -54,7 +54,7 @@
                             </td>
                         </tr>
                         <tr th:if="${customers.empty}">
-                            <td colspan="5" style="text-align: center; padding: 2rem; color: var(--gray-600);">Chưa có khách hàng nào. Hãy thêm khách hàng mới.</td>
+                            <td colspan="5" style="text-align: center; padding: 2rem; color: var(--gray-600);">Chưa có khách hàng thân thiết nào. Hãy thêm khách hàng mới.</td>
                         </tr>
                     </tbody>
                 </table>
@@ -63,7 +63,7 @@
 
         <!-- Hướng dẫn import -->
         <div class="panel" style="margin-top: 16px; padding: 16px;">
-            <h3 style="margin-bottom: 8px; font-size: 0.95rem; color: var(--dark);"><i class="fa-solid fa-info-circle"></i> Hướng dẫn Import Excel (Khách Hàng)</h3>
+            <h3 style="margin-bottom: 8px; font-size: 0.95rem; color: var(--dark);"><i class="fa-solid fa-info-circle"></i> Hướng dẫn Import Excel (Khách Hàng Thân Thiết)</h3>
             <p style="font-size: 0.85rem; color: var(--gray-600); margin: 0;">
                 File Excel (.xlsx) cần có các cột theo thứ tự: <strong>Họ Tên</strong> | <strong>Số Điện Thoại</strong> | <strong>Địa Chỉ</strong>. Hàng đầu tiên là tiêu đề (sẽ bị bỏ qua).
             </p>
