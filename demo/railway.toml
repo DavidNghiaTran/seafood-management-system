@@ -1,0 +1,11 @@
+[build]
+builder = "dockerfile"
+dockerfilePath = "Dockerfile"
+watchPatterns = ["src/**", "pom.xml", "Dockerfile"]
+
+[deploy]
+startCommand = "java -jar -Dserver.port=$PORT -Dspring.profiles.active=prod app.jar"
+healthcheckPath = "/"
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 5
+

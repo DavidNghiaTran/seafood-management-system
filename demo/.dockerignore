@@ -1,0 +1,11 @@
+target/
+.git/
+.github/
+.mvn/
+.vscode/
+.idea/
+*.md
+*.log
+database/
+sample-excel/
+docs/
