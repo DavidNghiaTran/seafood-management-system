@@ -4,6 +4,10 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+/**
+ * Thực thể biểu diễn lịch sử chấm công (Điểm danh) của nhân viên.
+ * Lưu trữ ngày làm việc, ca làm, và trạng thái hiện diện.
+ */
 @Entity
 @Table(name = "attendances")
 public class Attendance {

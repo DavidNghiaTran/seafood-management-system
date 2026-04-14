@@ -6,6 +6,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Model ánh xạ bảng dữ liệu "orders" trong cơ sở dữ liệu.
+ * Dùng để lưu trữ thông tin hoá đơn bán hàng của nhà hàng.
+ */
 @Entity
 @Table(name = "orders")
 public class Order {

@@ -2,6 +2,10 @@ package com.seafood.demo.entity;
 
 import jakarta.persistence.*;
 
+/**
+ * Entity ánh xạ bảng "users", chứa thông tin của nhân viên và quản trị viên.
+ * Dùng để xác thực đăng nhập (Login) và phân quyền (Role).
+ */
 @Entity
 @Table(name = "users")
 public class User {

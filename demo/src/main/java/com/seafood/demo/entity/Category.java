@@ -2,6 +2,10 @@ package com.seafood.demo.entity;
 
 import jakarta.persistence.*;
 
+/**
+ * Thực thể Danh mục món ăn (ví dụ: Hải sản tươi sống, Đồ uống...).
+ * Đại diện cho bảng "categories" trong cơ sở dữ liệu.
+ */
 @Entity
 @Table(name = "categories")
 public class Category {

@@ -8,6 +8,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Logic thao tác và quản lý dữ liệu Khách hàng với thao tác gọi xuống CSDL.
+ */
 @Service
 public class CustomerServiceImpl implements CustomerService {
 
@@ -34,6 +37,9 @@ public class CustomerServiceImpl implements CustomerService {
         customerRepository.deleteById(id);
     }
 
+    /**
+     * Kiểm tra số điện thoại bị trùng nhằm tránh thêm trùng khách hàng khi import Excel.
+     */
     @Override
     public boolean existsByPhone(String phone) {
         return customerRepository.existsByPhone(phone);

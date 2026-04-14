@@ -89,9 +89,9 @@ public class ExcelHelper {
                     break;
                 }
             }
-            // Nếu không tìm thấy header, bỏ qua hàng đầu tiên có dữ liệu
+            // Nếu không tìm thấy header, báo lỗi sai file
             if (firstDataRow == -1) {
-                firstDataRow = sheet.getFirstRowNum() + 1;
+                throw new RuntimeException("File Excel không đúng định dạng của Danh Mục. Không tìm thấy cột 'Tên danh mục'.");
             }
 
             for (int i = firstDataRow; i <= sheet.getLastRowNum(); i++) {
@@ -122,7 +122,17 @@ public class ExcelHelper {
             Iterator<Row> rows = sheet.iterator();
             List<Object[]> dishDataList = new ArrayList<>();
 
-            if (rows.hasNext()) rows.next(); // skip header
+            if (rows.hasNext()) {
+                Row headerRow = rows.next(); // skip header and validate it
+                String header0 = getStringCellValue(headerRow.getCell(0)).toLowerCase();
+                String header1 = getStringCellValue(headerRow.getCell(1)).toLowerCase();
+                if (!header0.contains("tên món") && !header0.contains("món ăn") && !header0.contains("name") 
+                 && !header1.contains("giá") && !header1.contains("price")) {
+                    throw new RuntimeException("File Excel không đúng định dạng của Món Ăn. Không tìm thấy cột 'Tên món' hoặc 'Giá'.");
+                }
+            } else {
+                throw new RuntimeException("File rỗng");
+            }
 
             while (rows.hasNext()) {
                 Row currentRow = rows.next();
@@ -152,7 +162,17 @@ public class ExcelHelper {
             Iterator<Row> rows = sheet.iterator();
             List<RestaurantTable> tables = new ArrayList<>();
 
-            if (rows.hasNext()) rows.next();
+            if (rows.hasNext()) {
+                Row headerRow = rows.next(); 
+                String header0 = getStringCellValue(headerRow.getCell(0)).toLowerCase();
+                String header1 = getStringCellValue(headerRow.getCell(1)).toLowerCase();
+                if (!header0.contains("số bàn") && !header0.contains("bàn") && !header0.contains("table")
+                 && !header1.contains("sức chứa") && !header1.contains("capacity")) {
+                    throw new RuntimeException("File Excel không đúng định dạng của Bàn. Không tìm thấy cột 'Số bàn' hoặc 'Sức chứa'.");
+                }
+            } else {
+                throw new RuntimeException("File rỗng");
+            }
 
             while (rows.hasNext()) {
                 Row currentRow = rows.next();
@@ -181,7 +201,17 @@ public class ExcelHelper {
             Iterator<Row> rows = sheet.iterator();
             List<Customer> customers = new ArrayList<>();
 
-            if (rows.hasNext()) rows.next();
+            if (rows.hasNext()) {
+                Row headerRow = rows.next();
+                String header0 = getStringCellValue(headerRow.getCell(0)).toLowerCase();
+                String header1 = getStringCellValue(headerRow.getCell(1)).toLowerCase();
+                if (!header0.contains("họ tên") && !header0.contains("khách hàng") && !header0.contains("tên")
+                 && !header1.contains("số điện thoại") && !header1.contains("điện thoại") && !header1.contains("phone")) {
+                    throw new RuntimeException("File Excel không đúng định dạng của Khách Hàng. Không tìm thấy cột 'Họ tên' hoặc 'Số điện thoại'.");
+                }
+            } else {
+                throw new RuntimeException("File rỗng");
+            }
 
             while (rows.hasNext()) {
                 Row currentRow = rows.next();
@@ -210,7 +240,17 @@ public class ExcelHelper {
             Iterator<Row> rows = sheet.iterator();
             List<User> users = new ArrayList<>();
 
-            if (rows.hasNext()) rows.next();
+            if (rows.hasNext()) {
+                Row headerRow = rows.next();
+                String header0 = getStringCellValue(headerRow.getCell(0)).toLowerCase();
+                String header1 = getStringCellValue(headerRow.getCell(1)).toLowerCase();
+                if (!header0.contains("họ tên") && !header0.contains("nhân viên") && !header0.contains("tên")
+                 && !header1.contains("tên đăng nhập") && !header1.contains("username") && !header1.contains("tài khoản")) {
+                    throw new RuntimeException("File Excel không đúng định dạng của Nhân Viên. Không tìm thấy cột 'Họ tên' hoặc 'Tên đăng nhập'.");
+                }
+            } else {
+                throw new RuntimeException("File rỗng");
+            }
 
             while (rows.hasNext()) {
                 Row currentRow = rows.next();

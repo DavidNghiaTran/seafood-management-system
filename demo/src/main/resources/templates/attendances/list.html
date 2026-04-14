@@ -36,7 +36,7 @@
                             <td th:text="${attendance.employee.position}">Phục vụ</td>
                             <td th:text="${attendance.checkInTime != null ? #temporals.format(attendance.checkInTime, 'HH:mm:ss') : '-'}">08:00</td>
                             <td>
-                                <span th:if="${attendance.status == 'CÓ MẶT'}" class="status-badge status-active">Có mặt</span>
+                                 <span th:if="${attendance.status == 'CÓ MẶT'}" class="status-badge status-active">Có mặt</span>
                                 <span th:if="${attendance.status == 'VẮNG MẶT'}" class="status-badge status-inactive">Vắng mặt</span>
                                 <span th:if="${attendance.status == 'TRỄ'}" class="status-badge status-pending">Đi trễ</span>
                             </td>

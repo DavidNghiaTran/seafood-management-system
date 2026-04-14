@@ -26,6 +26,7 @@
                         <i class="fa-solid fa-file-excel"></i> Import Excel
                     </button>
                 </form>
+                <a th:href="@{/tables/delete-all}" class="btn btn-danger" title="Xoá tất cả bàn" onclick="return confirm('Bạn có chắc chắn muốn xóa TOÀN BỘ dữ liệu danh sách Bàn hiện tại không? (Nhằm dọn dẹp lỗi khi import sai)');" style="background: #dc3545; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; text-decoration: none;"><i class="fa-solid fa-trash"></i> Xoá Tất Cả</a>
                 <a th:href="@{/tables/create}" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Thêm Bàn Mới</a>
             </div>
         </div>

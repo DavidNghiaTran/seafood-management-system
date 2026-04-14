@@ -15,6 +15,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Controller xử lý các yêu cầu liên quan đến Đơn hàng (Order).
+ * Nơi tiếp nhận các endpoint như xem danh sách, tạo mới, và thanh toán hóa đơn.
+ */
 @Controller
 @RequestMapping("/orders")
 public class OrderController {
@@ -31,14 +35,21 @@ public class OrderController {
     @Autowired
     private DishService dishService;
 
-    // View all orders (Hóa Đơn)
+    /**
+     * Hiển thị danh sách các đơn hàng gần đây (Hóa Đơn).
+     * @param model Đối tượng để truyền dữ liệu từ Controller sang View.
+     * @return Tên của template view (orders/list.html).
+     */
     @GetMapping
     public String listOrders(Model model) {
         model.addAttribute("orders", orderService.getRecentOrders());
         return "orders/list";
     }
 
-    // View POS layout (Tạo Đơn Hàng)
+    /**
+     * Hiển thị giao diện POS (Point of Sale) để tạo đơn hàng mới.
+     * Load các danh sách cần thiết như: Bàn trống, Khách hàng, Thực đơn.
+     */
     @GetMapping("/create")
     public String showCreateOrderForm(Model model) {
         model.addAttribute("tables", tableService.getAllTables());
@@ -47,7 +58,17 @@ public class OrderController {
         return "orders/create";
     }
 
-    // Process order creation via form submission
+    /**
+     * Xử lý luồng tạo đơn hàng mới khi người dùng submit form từ giao diện POS.
+     * 
+     * @param tableId ID bàn được chọn
+     * @param customerId ID khách hàng (có thể null nếu là khách lẻ)
+     * @param note Ghi chú thêm cho đơn hàng
+     * @param params Map chứa các ID món ăn và số lượng được chọn
+     * @param session HTTP Session để lấy thông tin nhân viên (User) đang lập đơn
+     * @param redirectAttributes Dùng để truyền câu thông báo thành công/lỗi sau khi chuyển hướng
+     * @return Đường dẫn chuyển hướng (redirect) sau khi xử lý.
+     */
     @PostMapping("/save")
     public String saveOrder(@RequestParam("tableId") Long tableId,
                             @RequestParam(value = "customerId", required = false) Long customerId,
@@ -56,43 +77,48 @@ public class OrderController {
                             HttpSession session,
                             RedirectAttributes redirectAttributes) {
                             
+        // 1. Kiểm tra quyền và lấy thông tin nhân viên lập đơn
         User loggedInUser = (User) session.getAttribute("loggedInUser");
         if (loggedInUser == null) {
-            return "redirect:/login";
+            return "redirect:/login"; // Nếu chưa đăng nhập thì chuyển về trang login
         }
 
+        // 2. Khởi tạo Đơn hàng mới
         Order order = new Order();
-        order.setOrderDate(LocalDateTime.now());
-        order.setStatus("PENDING");
-        order.setCreatedBy(loggedInUser);
+        order.setOrderDate(LocalDateTime.now()); // Thời gian tạo đơn
+        order.setStatus("PENDING"); // Đơn hàng mới tạo luôn ở trạng thái PENDING (chưa thanh toán)
+        order.setCreatedBy(loggedInUser); // Người lập đơn
 
-        // Set note (optional)
+        // Cập nhật Ghi chú (nếu có)
         if (note != null && !note.trim().isEmpty()) {
             order.setNote(note.trim());
         }
 
-        // Assign Table
+        // 3. Gán Bàn vào hệ thống đơn hàng
         tableService.getTableById(tableId).ifPresent(order::setRestaurantTable);
 
-        // Assign Customer (optional)
+        // 4. Gán thông tin Khách hàng (nếu là khách quen)
         if (customerId != null) {
             customerService.getCustomerById(customerId).ifPresent(order::setCustomer);
         }
 
         List<OrderDetail> details = new ArrayList<>();
-        // Extract dish quantities from params
+        // 5. Trích xuất thông tin món ăn và số lượng từ dữ liệu submit lên (params)
         for (Map.Entry<String, String> entry : params.entrySet()) {
+            // Định dạng thẻ input món ăn là 'dish_{id}'
             if (entry.getKey().startsWith("dish_")) {
-                Long dishId = Long.parseLong(entry.getKey().substring(5));
-                Integer quantity = Integer.parseInt(entry.getValue());
+                Long dishId = Long.parseLong(entry.getKey().substring(5)); // Lấy ID món
+                Integer quantity = Integer.parseInt(entry.getValue()); // Lấy số lượng đặt
                 
+                // Chỉ xử lý những món có số lượng > 0
                 if (quantity > 0) {
                     dishService.getDishById(dishId).ifPresent(dish -> {
+                        // Chỉ cho phép đặt các món hiện đang còn phục vụ (status = true)
                         if (dish.isStatus()) {
                             OrderDetail detail = new OrderDetail();
                             detail.setDish(dish);
                             detail.setQuantity(quantity);
-                            detail.setPrice(BigDecimal.valueOf(dish.getPrice()));
+                            detail.setPrice(BigDecimal.valueOf(dish.getPrice())); // Lấy giá hiện tại của món
                             details.add(detail);
                         }
                     });
@@ -100,11 +126,13 @@ public class OrderController {
             }
         }
 
+        // Kiểm tra xem đơn hàng có món ăn nào không, nếu không báo lỗi
         if (details.isEmpty()) {
             redirectAttributes.addFlashAttribute("errorMessage", "Vui lòng chọn ít nhất 1 món ăn!");
             return "redirect:/orders/create";
         }
 
+        // 6. Gán Chi tiết đơn hàng và lưu vào cơ sở dữ liệu
         order.setOrderDetails(details);
         orderService.saveOrder(order);
 
@@ -112,7 +140,11 @@ public class OrderController {
         return "redirect:/orders";
     }
 
-    // Mark as completed
+    /**
+     * Xử lý cập nhật trạng thái đơn hàng thành hoàn tất (Thanh toán).
+     * 
+     * @param id ID của đơn hàng cần thanh toán
+     */
     @GetMapping("/complete/{id}")
     public String completeOrder(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
         orderService.completeOrder(id);

@@ -43,10 +43,17 @@ public class CategoryController {
 
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable("id") Long id, Model model) {
-        Category category = categoryService.getCategoryById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid category Id:" + id));
-        model.addAttribute("category", category);
-        return "categories/form";
+        // Tối giản hóa: Lấy đối tượng ra, nếu không có thì gán bằng null
+        Category category = categoryService.getCategoryById(id).orElse(null);
+        
+        // Kiểm tra khác null bằng if cơ bản thay vì dùng orElseThrow với Lambda
+        if (category != null) {
+            model.addAttribute("category", category);
+            return "categories/form";
+        }
+        
+        // Nếu ID sai hoặc danh mục không tồn tại, an toàn quay về trang danh sách
+        return "redirect:/categories";
     }
 
     @GetMapping("/delete/{id}")
@@ -66,32 +73,39 @@ public class CategoryController {
             redirectAttributes.addFlashAttribute("errorMessage", "Vui lòng chọn file Excel để import!");
             return "redirect:/categories";
         }
+
         if (!ExcelHelper.hasExcelFormat(file)) {
             redirectAttributes.addFlashAttribute("errorMessage", "Chỉ hỗ trợ file định dạng .xlsx!");
             return "redirect:/categories";
         }
+
         try {
             List<Category> categories = ExcelHelper.excelToCategories(file.getInputStream());
             int imported = 0;
             int skipped = 0;
+
             for (Category category : categories) {
-                // Bỏ qua danh mục đã tồn tại (trùng tên)
                 Category existing = categoryRepository.findByName(category.getName());
+
                 if (existing != null) {
                     skipped++;
                     continue;
                 }
+
                 categoryService.saveCategory(category);
                 imported++;
             }
+
             String msg = "Import thành công " + imported + " danh mục!";
             if (skipped > 0) {
                 msg += " (Bỏ qua " + skipped + " danh mục đã tồn tại)";
             }
+
             redirectAttributes.addFlashAttribute("successMessage", msg);
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Lỗi import: " + e.getMessage());
         }
+
         return "redirect:/categories";
     }
 }

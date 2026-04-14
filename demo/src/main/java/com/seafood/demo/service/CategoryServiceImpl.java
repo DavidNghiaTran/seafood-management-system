@@ -8,6 +8,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Lớp logic cho thao tác CRUD của Danh mục.
+ */
 @Service
 public class CategoryServiceImpl implements CategoryService {
 

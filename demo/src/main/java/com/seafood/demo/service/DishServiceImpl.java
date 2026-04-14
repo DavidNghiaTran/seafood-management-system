@@ -8,6 +8,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Implement các nghiệp vụ liên quan đến Món ăn.
+ */
 @Service
 public class DishServiceImpl implements DishService {
 
@@ -34,6 +37,9 @@ public class DishServiceImpl implements DishService {
         dishRepository.deleteById(id);
     }
 
+    /**
+     * Lấy danh sách món ăn thuộc về một danh mục cụ thể (vd: "Đồ uống", "Món chính")
+     */
     @Override
     public List<Dish> getDishesByCategoryId(Long categoryId) {
         return dishRepository.findByCategoryId(categoryId);

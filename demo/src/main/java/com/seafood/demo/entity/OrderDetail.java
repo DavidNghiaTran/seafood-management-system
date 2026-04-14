@@ -3,6 +3,10 @@ package com.seafood.demo.entity;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 
+/**
+ * Chi tiết đơn hàng. Liên kết nhiều-một (Many-To-One) với Đơn hàng (Order) và Món ăn (Dish).
+ * Lưu trữ số lượng và giá của món ăn tại thời điểm thanh toán.
+ */
 @Entity
 @Table(name = "order_details")
 public class OrderDetail {

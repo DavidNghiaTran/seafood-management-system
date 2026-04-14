@@ -2,6 +2,10 @@ package com.seafood.demo.entity;
 
 import jakarta.persistence.*;
 
+/**
+ * Entity lưu trữ thông tin về Bàn của nhà hàng.
+ * Thuộc tính status: true (Bàn trống - Available), false (Đang bận phục vụ khách).
+ */
 @Entity
 @Table(name = "tables")
 public class RestaurantTable {

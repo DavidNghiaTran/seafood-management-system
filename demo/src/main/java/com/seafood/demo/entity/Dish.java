@@ -2,6 +2,10 @@ package com.seafood.demo.entity;
 
 import jakarta.persistence.*;
 
+/**
+ * Thực thể Món ăn (Dish), ánh xạ với bảng "dishes".
+ * Lưu trữ thông tin tên món, giá báo, và thuộc về một Category cụ thể.
+ */
 @Entity
 @Table(name = "dishes")
 public class Dish {

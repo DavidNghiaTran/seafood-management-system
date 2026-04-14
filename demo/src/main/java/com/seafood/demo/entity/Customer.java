@@ -2,6 +2,10 @@ package com.seafood.demo.entity;
 
 import jakarta.persistence.*;
 
+/**
+ * Thực thể tượng trưng cho Khách Hàng (Đặc biệt là khách hàng thân thiết).
+ * Ánh xạ với bảng "customers".
+ */
 @Entity
 @Table(name = "customers")
 public class Customer {

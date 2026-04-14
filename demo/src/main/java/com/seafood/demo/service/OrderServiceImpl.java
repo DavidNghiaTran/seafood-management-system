@@ -13,6 +13,10 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Implement các logic nghiệp vụ cho thực thể Đơn hàng (Order).
+ * Bao gồm các thao tác tính toán tổng tiền, xử lý trạng thái bàn.
+ */
 @Service
 public class OrderServiceImpl implements OrderService {
 
@@ -29,6 +33,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<Order> getRecentOrders() {
+        // Lấy danh sách đơn hàng đã được sắp xếp giảm dần theo thời gian tạo
         return orderRepository.findByOrderByOrderDateDesc();
     }
 
@@ -38,25 +43,29 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional
+    @Transactional // Đảm bảo tính toàn vẹn dữ liệu (rollback nếu có lỗi trong quá trình lưu)
     public Order saveOrder(Order order) {
-        // Calculate total amount if order details are present
+        // 1. Nếu đơn hàng có danh sách món ăn, tiến hành tính tổng tiền (Total Amount)
         if (order.getOrderDetails() != null && !order.getOrderDetails().isEmpty()) {
             BigDecimal total = order.getOrderDetails().stream()
                 .map(detail -> detail.getPrice().multiply(new BigDecimal(detail.getQuantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
             order.setTotalAmount(total);
 
-            // Maintain bidirectional relationship
+            // 2. Bảo trì mối quan hệ 2 chiều (Bidirectional Mapping) 
+            // Gán ngược đơn hàng cha cho từng chi tiết món ăn (child)
             for (OrderDetail detail : order.getOrderDetails()) {
                 detail.setOrder(order);
             }
         }
+        
+        // 3. Tiến hành lưu đơn hàng xuống Database (Cascade sẽ tự động lưu OrderDetails)
         Order savedOrder = orderRepository.save(order);
         
-        // Update table status
+        // 4. Cập nhật lại Trạng thái của Bàn nhà hàng
         if (savedOrder.getRestaurantTable() != null) {
             RestaurantTable table = savedOrder.getRestaurantTable();
+            // Đặt trạng thái bàn thành "Đang phục vụ" (false)
             table.setStatus(false);
             tableRepository.save(table);
         }
@@ -68,15 +77,17 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public void completeOrder(Long orderId) {
         orderRepository.findById(orderId).ifPresent(order -> {
+            // 1. Chuyển trạng thái hóa đơn sang đã thanh toán (COMPLETED)
             order.setStatus("COMPLETED");
             
-            // Free the table
+            // 2. Giải phóng Bàn (Khi khách thanh toán xong thì bàn trống đón khách mới)
             if (order.getRestaurantTable() != null) {
                 RestaurantTable table = order.getRestaurantTable();
-                table.setStatus(true); // true = AVAILABLE
+                table.setStatus(true); // true = Bàn trống (AVAILABLE)
                 tableRepository.save(table);
             }
             
+            // 3. Lưu lại cập nhật
             orderRepository.save(order);
         });
     }
