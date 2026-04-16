@@ -19,6 +19,9 @@
     <div class="form-container">
         <h2 th:text="${user.id != null ? 'Cập Nhật Người Dùng' : 'Thêm Người Dùng Mới'}"></h2>
         
+        <div th:if="${errorMessage}" style="background-color: #fee2e2; color: #b91c1c; padding: 10px; border-radius: 5px; margin-bottom: 20px;" th:text="${errorMessage}">
+        </div>
+        
         <form th:action="${user.id != null ? '/users/update/' + user.id : '/users/save'}" th:object="${user}" method="post">
             
             <div class="form-group">

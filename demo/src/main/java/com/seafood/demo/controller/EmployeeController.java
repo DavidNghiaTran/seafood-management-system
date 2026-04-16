@@ -52,9 +52,14 @@ public class EmployeeController {
      * Lưu thông tin Nhân viên mới từ form.
      */
     @PostMapping("/save")
-    public String saveEmployee(@ModelAttribute("employee") User employee) {
+    public String saveEmployee(@ModelAttribute("employee") User employee, Model model, RedirectAttributes redirectAttributes) {
+        if (userService.getUserByUsername(employee.getUsername()).isPresent()) {
+            model.addAttribute("errorMessage", "Tên đăng nhập đã tồn tại. Vui lòng chọn tên khác!");
+            return "employees/form";
+        }
         employee.setRole(Role.EMPLOYEE); // Đảm bảo role luôn được gán là EMPLOYEE
         userService.saveUser(employee);
+        redirectAttributes.addFlashAttribute("successMessage", "Đã thêm mới nhân viên thành công!");
         return "redirect:/employees";
     }
 
@@ -129,11 +134,8 @@ public class EmployeeController {
             int imported = 0;
             int skipped = 0;
             
-            // Lấy danh sách nhân viên hiện có để check trùng lặp username
-            List<User> existingEmployees = userService.getUsersByRole(Role.EMPLOYEE);
-            
             for (User employee : employees) {
-                boolean exists = existingEmployees.stream().anyMatch(e -> e.getUsername().equalsIgnoreCase(employee.getUsername()));
+                boolean exists = userService.getUserByUsername(employee.getUsername()).isPresent();
                 if (exists) {
                     skipped++;
                     continue;

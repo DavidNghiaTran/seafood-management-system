@@ -43,4 +43,9 @@ public interface UserService {
      * Xóa tài khoản khỏi hệ thống.
      */
     void deleteUser(Long id);
+
+    /**
+     * TÌm kiếm thông tin người dùng theo username (Tên đăng nhập).
+     */
+    Optional<User> getUserByUsername(String username);
 }

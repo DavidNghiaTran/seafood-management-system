@@ -29,32 +29,37 @@ public class AuthInterceptor implements HandlerInterceptor {
             return false;
         }
 
-        // Kiểm tra quyền truy cập theo đường dẫn (ví dụ đơn giản)
-        if (uri.startsWith("/users")) {
-            if (user.getRole() != Role.ADMIN) {
-                // Không có quyền thì chuyển ra trang chủ kèm thông báo lỗi hoặc trang 403
-                response.sendRedirect("/?error=access_denied");
-                return false;
+        // Nếu user có Role là ADMIN, luôn cho phép
+        if (user.getRole() == Role.ADMIN) {
+            return true;
+        }
+
+        // Quyền dùng chung cho mọi tài khoản đã đăng nhập (Ví dụ: Trang chủ / trang cá nhân)
+        if (uri.equals("/") || uri.startsWith("/profile") || uri.startsWith("/logout") || uri.startsWith("/api/")) {
+            return true;
+        }
+
+        // Quyền của ACCOUNTANT (Kế Toán)
+        if (user.getRole() == Role.ACCOUNTANT) {
+            // Kế toán chỉ được thao tác với Đơn Hàng và Báo cáo doanh thu
+            if (uri.startsWith("/orders") || uri.startsWith("/reports")) {
+                return true;
             }
+            // Không có quyền thì chặn lại
+            response.sendRedirect("/?error=access_denied");
+            return false;
         }
 
-        // Ví dụ: Kế toán và Admin được vào /orders
-        if (uri.startsWith("/orders") || uri.startsWith("/invoices")) {
-             if (user.getRole() != Role.ADMIN && user.getRole() != Role.ACCOUNTANT) {
-                 response.sendRedirect("/?error=access_denied");
-                 return false;
-             }
+        // Quyền của EMPLOYEE (Nhân Viên) - Phục vụ/Đầu bếp v.v.
+        if (user.getRole() == Role.EMPLOYEE) {
+            // Nhân viên chỉ được xem và sửa thông tin của mình ở /profile (đã cho phép ở trên)
+            // Mọi truy cập vào chức năng quán (đơn hàng, người dùng, bàn...) đều bị cấm
+            response.sendRedirect("/?error=access_denied");
+            return false;
         }
 
-        // Ví dụ: Nhân viên và Admin được vào /shifts
-        if (uri.startsWith("/shifts") || uri.startsWith("/profile")) {
-             if (user.getRole() != Role.ADMIN && user.getRole() != Role.EMPLOYEE) {
-                 response.sendRedirect("/?error=access_denied");
-                 return false;
-             }
-        }
-
-        // Nếu hợp lệ thì cho phép handle tiếp
-        return true;
+        // Thu gọn các trường hợp không kiểm soát được
+        response.sendRedirect("/?error=access_denied");
+        return false;
     }
 }

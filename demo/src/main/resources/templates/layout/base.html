@@ -21,25 +21,35 @@
             </div>
             <ul class="nav-links">
                 <li><a th:href="@{/}"><i class="fa-solid fa-house"></i> Dashboard</a></li>
-                <li class="nav-title">Menu & Bàn</li>
-                <li><a th:href="@{/categories}"><i class="fa-solid fa-layer-group"></i> Danh Mục Món</a></li>
-                <li><a th:href="@{/dishes}"><i class="fa-solid fa-bowl-food"></i> Quản Lý Món Ăn</a></li>
-                <li><a th:href="@{/tables}"><i class="fa-solid fa-chair"></i> Quản Lý Bàn</a></li>
+                <th:block th:if="${session.loggedInUser != null and session.loggedInUser.role.name() == 'ADMIN'}">
+                    <li class="nav-title">Menu & Bàn</li>
+                    <li><a th:href="@{/categories}"><i class="fa-solid fa-layer-group"></i> Danh Mục Món</a></li>
+                    <li><a th:href="@{/dishes}"><i class="fa-solid fa-bowl-food"></i> Quản Lý Món Ăn</a></li>
+                    <li><a th:href="@{/tables}"><i class="fa-solid fa-chair"></i> Quản Lý Bàn</a></li>
+                </th:block>
                 
-                <li class="nav-title">Đơn Hàng</li>
-                <li><a th:href="@{/orders/create}"><i class="fa-solid fa-cart-plus"></i> Tạo Đơn Hàng</a></li>
-                <li><a th:href="@{/orders}"><i class="fa-solid fa-receipt"></i> Hóa Đơn</a></li>
+                <th:block th:if="${session.loggedInUser != null and (session.loggedInUser.role.name() == 'ADMIN' or session.loggedInUser.role.name() == 'ACCOUNTANT')}">
+                    <li class="nav-title">Đơn Hàng</li>
+                    <li><a th:href="@{/orders/create}"><i class="fa-solid fa-cart-plus"></i> Tạo Đơn Hàng</a></li>
+                    <li><a th:href="@{/orders}"><i class="fa-solid fa-receipt"></i> Hóa Đơn</a></li>
+                </th:block>
                 
-                <li class="nav-title">Người Dùng</li>
-                <li><a th:href="@{/customers}"><i class="fa-solid fa-users"></i> Khách Hàng Thân Thiết</a></li>
-                <li th:if="${session.loggedInUser != null and session.loggedInUser.role.name() == 'ADMIN'}">
-                    <a th:href="@{/users}"><i class="fa-solid fa-user-shield"></i> Quản Lý Tài Khoản</a>
-                </li>
-                <li><a th:href="@{/employees}"><i class="fa-solid fa-user-tie"></i> Nhân Viên</a></li>
-                <li><a th:href="@{/attendances}"><i class="fa-solid fa-clock"></i> Chấm Công</a></li>
+                <th:block th:if="${session.loggedInUser != null and session.loggedInUser.role.name() == 'ADMIN'}">
+                    <li class="nav-title">Người Dùng</li>
+                    <li><a th:href="@{/customers}"><i class="fa-solid fa-users"></i> Khách Hàng Thân Thiết</a></li>
+                    <li><a th:href="@{/users}"><i class="fa-solid fa-user-shield"></i> Quản Lý Tài Khoản</a></li>
+                    <li><a th:href="@{/employees}"><i class="fa-solid fa-user-tie"></i> Nhân Viên</a></li>
+                    <li><a th:href="@{/attendances}"><i class="fa-solid fa-clock"></i> Chấm Công</a></li>
+                </th:block>
                 
-                <li class="nav-title">Báo Cáo</li>
-                <li><a th:href="@{/reports}"><i class="fa-solid fa-chart-line"></i> Doanh Thu</a></li>
+                <th:block th:if="${session.loggedInUser != null and (session.loggedInUser.role.name() == 'ADMIN' or session.loggedInUser.role.name() == 'ACCOUNTANT')}">
+                    <li class="nav-title">Báo Cáo</li>
+                    <li><a th:href="@{/reports}"><i class="fa-solid fa-chart-line"></i> Doanh Thu</a></li>
+                </th:block>
+
+                <!-- Menu chung cho toàn bộ nhân viên bao gồm việc xem hồ sơ -->
+                <li class="nav-title">Cá Nhân</li>
+                <li><a th:href="@{/profile}"><i class="fa-solid fa-id-badge"></i> Thông tin cá nhân</a></li>
             </ul>
         </aside>
 

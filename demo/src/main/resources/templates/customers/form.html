@@ -21,7 +21,7 @@
                 
                 <div class="form-group" style="margin-bottom: 1.5rem;">
                     <label for="phone" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: var(--dark);">Số Điện Thoại <span class="text-danger">*</span></label>
-                    <input type="text" id="phone" th:field="*{phone}" class="form-control" required style="width: 100%; padding: 0.8rem; border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit;">
+                    <input type="text" id="phone" th:field="*{phone}" class="form-control" required pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '');" style="width: 100%; padding: 0.8rem; border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit;">
                 </div>
 
                 <div class="form-group" style="margin-bottom: 1.5rem;">

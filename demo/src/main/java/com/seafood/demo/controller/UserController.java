@@ -47,8 +47,14 @@ public class UserController {
      * Nhận dữ liệu submit từ form và lưu thông tin nhân viên mới vào cơ sở dữ liệu.
      */
     @PostMapping("/save")
-    public String saveUser(@ModelAttribute("user") User user) {
+    public String saveUser(@ModelAttribute("user") User user, Model model, org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
+        if (userService.getUserByUsername(user.getUsername()).isPresent()) {
+            model.addAttribute("roles", Role.values());
+            model.addAttribute("errorMessage", "Tên đăng nhập đã tồn tại. Vui lòng chọn tên khác!");
+            return "users/form";
+        }
         userService.saveUser(user);
+        redirectAttributes.addFlashAttribute("successMessage", "Đã thêm mới tài khoản thành công!");
         return "redirect:/users";
     }
 
